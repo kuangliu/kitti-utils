@@ -3,12 +3,25 @@ import numpy as np
 
 
 class KittiLabelParser:
-    def __init__(self, root):
+    kitti_classes = ['Car', 'Van', 'Truck',
+                     'Pedestrian', 'Person_sitting', 'Cyclist',
+                     'Tram', 'Misc', 'DontCare']
+
+    def __init__(self, root, classes=None):
+        '''
+        Args:
+          root: KITTI data root.
+          classes: If specified, only parse these classes.
+        '''
         self.root = root
-        self.m = {}
+        self.classes = classes if classes else self.kitti_classes
+
+        self.m = {}  # {fname: labels}
         for fname in os.listdir(self.root):
-            idx = fname[:-4]
-            self.m[idx] = self.parse_file(fname)
+            labels = self.parse_file(fname)
+            if len(labels) > 0:
+                idx = fname[:-4]
+                self.m[idx] = labels
         self.fnames = list(self.m.keys())
 
     def parse_file(self, fname):
@@ -17,6 +30,8 @@ class KittiLabelParser:
             for line in f.readlines():
                 sp = line.strip().split()
                 cls = sp[0]
+                if cls not in self.classes:
+                    continue
                 a = [float(x) for x in sp[4:]]
                 bbox = [a[0], a[1], a[2], a[3]]
                 height, width, length = a[4], a[5], a[6]
@@ -40,8 +55,10 @@ class KittiLabelParser:
 
 
 def test():
-    parser = KittiLabelParser('./data/training/label_2/')
+    parser = KittiLabelParser(
+        './data/training/label_2/', classes=['Car'])
     print(len(parser))
     print(parser[0])
+
 
 # test()
