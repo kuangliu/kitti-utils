@@ -43,6 +43,8 @@ class Calibration:
         self.R_ref_to_cam = calib['R0_rect'].reshape(3, 3)  # 3x3
         self.P_cam_to_img = calib['P2'].reshape(3, 4)  # 3x4
 
+        self.P_ref_to_velo = self.inverse_transpose(self.P_velo_to_ref)  # 3x4
+
     def read_calib_file(self, calib_filepath):
         calib = {}
         with open(calib_filepath) as f:
@@ -66,6 +68,20 @@ class Calibration:
         n = pts_3d.shape[0]
         return np.hstack([pts_3d, np.ones((n, 1))])
 
+    def inverse_transpose(self, P):
+        '''Inverse rigit body transform matrix (3x4).
+
+        Args:
+          P: 3x4 transpose matrix.
+
+        Returns:
+          3x4 inverse transpose matrix. 
+        '''
+        P2 = np.zeros_like(P)
+        P2[:3, :3] = P[:3, :3].T
+        P2[:3, 3] = np.dot(-P[:3, :3].T, P[:3, 3])
+        return P2
+
     def project_velo_to_ref(self, pts_3d):
         '''Rotate & translate points from velodyne coord. to reference camera coord.
 
@@ -76,7 +92,19 @@ class Calibration:
           nx3 points in reference camera coord.
         '''
         pts_3d = self.cart_to_homo(pts_3d)
-        return np.dot(pts_3d, self.P_velo_to_ref.transpose())
+        return np.dot(pts_3d, self.P_velo_to_ref.T)
+
+    def project_ref_to_velo(self, pts_3d):
+        '''Inverse velo_to_ref project.
+
+        Args:
+          pts_3d: nx3 points in reference camera coord.
+
+        Returns:
+          nx3 points in velodyne coord.
+        '''
+        pts_3d = self.cart_to_homo(pts_3d)
+        return np.dot(pts_3d, self.P_ref_to_velo.T)
 
     def project_ref_to_cam(self, pts_3d):
         '''Rotate points from reference camera coord. to main camera coord.
@@ -90,7 +118,22 @@ class Calibration:
         y = (R * x^T)^T
           = x * R^T
         '''
-        return np.dot(pts_3d, self.R_ref_to_cam.transpose())
+        return np.dot(pts_3d, self.R_ref_to_cam.T)
+
+    def project_cam_to_ref(self, pts_3d):
+        '''Inverse ref_to_cam project.
+
+        Args:
+          pts_3d: nx3 points in main camera coord.
+
+        Returns:
+          nx3 points in reference camera coord.
+
+        y = (R * x^T)^T
+          = x * R^T
+        '''
+        R_cam_to_ref = self.R_ref_to_cam.T
+        return np.dot(pts_3d, R_cam_to_ref.T)
 
     def project_cam_to_img(self, pts_3d):
         '''Project points in main camera coord. to image/pixel coord.
@@ -102,7 +145,7 @@ class Calibration:
           nx2 points in image coord.
         '''
         pts_3d = self.cart_to_homo(pts_3d)
-        pts_3d = np.dot(pts_3d, self.P_cam_to_img.transpose())  # nx3
+        pts_3d = np.dot(pts_3d, self.P_cam_to_img.T)  # nx3
         pts_3d[:, 0] /= pts_3d[:, 2]
         pts_3d[:, 1] /= pts_3d[:, 2]
         return pts_3d[:, :2]
