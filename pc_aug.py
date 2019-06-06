@@ -19,7 +19,7 @@ def random_scale(pc, scale_range=[0.9, 1.1]):
     '''
     scale = random.uniform(*scale_range)
     pc = scale * pc
-    return pc
+    return pc, scale
 
 
 def random_shift(pc, x_range=[0, 0], y_range=[0, 0], z_range=[0, 0]):
