@@ -3,6 +3,25 @@ import random
 import numpy as np
 
 
+def random_scale(pc, scale_range=[0.9, 1.1]):
+    '''Randomly scale the point cloud.
+
+    Args:
+      pc: (np.array) point cloud, sized [N,4].
+      scale_range: (list) scale range.
+
+    Return:
+      scaled point cloud, sized [N,4].
+      scale param.
+
+    Velodyne coord:
+      front x, left y, up z.
+    '''
+    scale = random.uniform(*scale_range)
+    pc = scale * pc
+    return pc
+
+
 def random_shift(pc, x_range=[0, 0], y_range=[0, 0], z_range=[0, 0]):
     '''Randomly shift the point cloud.
 
