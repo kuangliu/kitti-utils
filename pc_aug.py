@@ -50,7 +50,7 @@ def random_rotate(pc, rotate_range=[0, 0]):
 
     Args:
       pc: (np.array) point cloud, sized [N,4].
-      rotate_range: (list) rotation range in radians.
+      rotate_range: (list) rotation range in degrees.
 
     Returns:
       rotated point cloud, sized [N,4].
@@ -59,7 +59,7 @@ def random_rotate(pc, rotate_range=[0, 0]):
     Velodyne coord:
       front x, left y, up z.
     '''
-    y = random.uniform(*rotate_range)
+    y = random.uniform(*rotate_range) * np.pi / 180
     ymtx = np.array([
         [np.cos(y), -np.sin(y), 0],
         [np.sin(y), np.cos(y), 0],
