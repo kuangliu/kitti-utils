@@ -18,7 +18,7 @@ def random_scale(pc, scale_range=[0.9, 1.1]):
       front x, left y, up z.
     '''
     scale = random.uniform(*scale_range)
-    pc = scale * pc
+    pc[:, :3] = scale * pc[:, :3]
     return pc, scale
 
 
