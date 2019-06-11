@@ -13,7 +13,7 @@ class KittiLabelParser:
           root: KITTI data root.
           classes: If specified, only parse these classes.
         '''
-        self.root = root
+        self.root = os.path.join(root, 'training', 'label_2')
         self.classes = classes if classes else self.kitti_classes
 
         self.m = {}  # {fname: labels}
@@ -25,6 +25,7 @@ class KittiLabelParser:
         self.fnames = list(self.m.keys())
 
     def parse_file(self, fname):
+        fname = fname if fname.endswith('.txt') else fname + '.txt'
         ret = []
         with open(os.path.join(self.root, fname)) as f:
             for line in f.readlines():
@@ -55,8 +56,7 @@ class KittiLabelParser:
 
 
 def test():
-    parser = KittiLabelParser(
-        './data/training/label_2/', classes=['Car'])
+    parser = KittiLabelParser('./data/', classes=['Car'])
     print(len(parser))
     print(parser[0])
 
