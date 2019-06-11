@@ -32,19 +32,34 @@ def draw_projected_bbox3d_on_image(img, pts, color=(0, 255, 0), thickness=2):
     return img
 
 
-def draw_lidar_points(pts):
+def draw_lidar_points(pc, bboxes):
     '''Draw lidar points.
 
     Args:
-      pts: lidar points sized (n,3) of XYZ.
+      pc: (np.array) point cloud, sized (n,3) of XYZ.
+      bboxes: (list(np.array)) list of 3D bounding boxes, each sized [8,3].
     '''
     fig = mlab.figure(figure=None, bgcolor=(0, 0, 0),
                       fgcolor=None, engine=None, size=(1600, 1000))
-    color = pts[:, 2]
-    mlab.points3d(pts[:, 0], pts[:, 1], pts[:, 2], color, color=None,
+    color = pc[:, 2]
+    mlab.points3d(pc[:, 0], pc[:, 1], pc[:, 2], color, color=None,
                   mode='point', colormap='gnuplot', scale_factor=0.3, figure=fig)
+    
     # draw origin
     mlab.points3d(0, 0, 0, color=(1, 1, 1), mode='sphere', scale_factor=0.2)
     mlab.view(azimuth=180, elevation=70, focalpoint=[
               12.0909996, -1.04700089, -2.03249991], distance=62.0, figure=fig)
+    
+    # draw 3d bboxes
+    for bbox in bboxes:
+        for k in range(0, 4):
+            i, j = k, (k+1) % 4
+            p, q = bbox[i], bbox[j]
+            mlab.plot3d([p[0], q[0]], [p[1], q[1]], [p[2], q[2]])
+            i, j = k+4, (k+1) % 4 + 4
+            p, q = bbox[i], bbox[j]
+            mlab.plot3d([p[0], q[0]], [p[1], q[1]], [p[2], q[2]])
+            i, j = k, k+4
+            p, q = bbox[i], bbox[j]
+            mlab.plot3d([p[0], q[0]], [p[1], q[1]], [p[2], q[2]])
     mlab.show()
