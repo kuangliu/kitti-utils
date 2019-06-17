@@ -32,7 +32,7 @@ def draw_projected_bbox3d_on_image(img, pts, color=(0, 255, 0), thickness=2):
     return img
 
 
-def draw_lidar_points(pc, bboxes):
+def draw_lidar_points(pc, bboxes=None):
     '''Draw lidar points.
 
     Args:
@@ -51,15 +51,16 @@ def draw_lidar_points(pc, bboxes):
               12.0909996, -1.04700089, -2.03249991], distance=62.0, figure=fig)
     
     # draw 3d bboxes
-    for bbox in bboxes:
-        for k in range(0, 4):
-            i, j = k, (k+1) % 4
-            p, q = bbox[i], bbox[j]
-            mlab.plot3d([p[0], q[0]], [p[1], q[1]], [p[2], q[2]])
-            i, j = k+4, (k+1) % 4 + 4
-            p, q = bbox[i], bbox[j]
-            mlab.plot3d([p[0], q[0]], [p[1], q[1]], [p[2], q[2]])
-            i, j = k, k+4
-            p, q = bbox[i], bbox[j]
-            mlab.plot3d([p[0], q[0]], [p[1], q[1]], [p[2], q[2]])
+    if bboxes is not None:
+        for bbox in bboxes:
+            for k in range(0, 4):
+                i, j = k, (k+1) % 4
+                p, q = bbox[i], bbox[j]
+                mlab.plot3d([p[0], q[0]], [p[1], q[1]], [p[2], q[2]])
+                i, j = k+4, (k+1) % 4 + 4
+                p, q = bbox[i], bbox[j]
+                mlab.plot3d([p[0], q[0]], [p[1], q[1]], [p[2], q[2]])
+                i, j = k, k+4
+                p, q = bbox[i], bbox[j]
+                mlab.plot3d([p[0], q[0]], [p[1], q[1]], [p[2], q[2]])
     mlab.show()
