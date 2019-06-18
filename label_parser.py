@@ -45,6 +45,39 @@ class KittiLabelParser:
                 })
         return ret
 
+    def parse_boxes_in_camera(self, fname):
+        '''Parse annotated 3D bounding oxes in camera coordinate.
+
+        Args:
+          fname: (str) file name.
+
+        Returns:
+          (list(np.array)) list of 3D bounding boxes in camera coordinate, each sized [8,3].
+        '''
+        boxes = []
+        for obj in self.parse_file(fname):
+            w, h, l = obj['w'], obj['h'], obj['l']
+            t = obj['t']
+            ry = obj['ry']
+            # obj coord.
+            x_corners = [l/2, l/2, -l/2, -l/2, l/2, l/2, -l/2, -l/2]
+            y_corners = [0, 0, 0, 0, -h, -h, -h, -h]
+            z_corners = [w/2, -w/2, -w/2, w/2, w/2, -w/2, -w/2, w/2]
+            x = np.vstack([x_corners, y_corners, z_corners])  # 3x8
+            # obj -> camera
+            s = np.sin(ry)
+            c = np.cos(ry)
+            R_obj_to_cam = np.array([[c, 0, s],
+                                     [0, 1, 0],
+                                     [-s, 0, c]])
+            x = np.dot(R_obj_to_cam, x)  # 3x8
+            x[0, :] = x[0, :] + t[0]
+            x[1, :] = x[1, :] + t[1]
+            x[2, :] = x[2, :] + t[2]
+            x = x.transpose()  # 8x3
+            boxes.append(x)
+        return boxes
+
     def get(self, fname):
         return self.m[fname]
 
