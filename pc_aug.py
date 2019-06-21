@@ -10,7 +10,7 @@ def random_scale(pc, scale_range=[0.9, 1.1]):
       pc: (np.array) point cloud, sized [N,4].
       scale_range: (list) scale range.
 
-    Return:
+    Returns:
       scaled point cloud, sized [N,4].
       scale param.
 
@@ -31,7 +31,7 @@ def random_shift(pc, x_range=[0, 0], y_range=[0, 0], z_range=[0, 0]):
       y_range: (list) y shift range.
       z_range: (list) z shift range.
 
-    Return:
+    Returns:
       shifted point cloud, sized [N,4].
       shift param.
 
@@ -69,15 +69,12 @@ def random_rotate(pc, rotate_range=[0, 0]):
     return pc, ymtx
 
 
-def flip(pc):
+def pc_flip(pc):
     pc[:, 1] = -pc[:, 1]
     return pc
 
 
-def test():
+if __name__ == '__main__':
     pc = np.random.randn(10, 4)
     print(pc)
     print(random_shift(pc, (0, 5), (0, 5), (0, 5))[0])
-
-
-# test()

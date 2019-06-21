@@ -88,10 +88,9 @@ class KittiLabelParser:
         return len(self.fnames)
 
 
-def test():
+if __name__ == '__main__':
     parser = KittiLabelParser('./data/', classes=['Car'])
     print(len(parser))
     print(parser[0])
 
 
-# test()
