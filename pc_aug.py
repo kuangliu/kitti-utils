@@ -69,9 +69,12 @@ def random_rotate(pc, rotate_range=[0, 0]):
     return pc, ymtx
 
 
-def pc_flip(pc):
-    pc[:, 1] = -pc[:, 1]
-    return pc
+def random_flip(pc):
+    flip = False
+    if random.random() < 0.5:
+        pc[:, 1] = -pc[:, 1]
+        flip = True
+    return pc, flip
 
 
 if __name__ == '__main__':
