@@ -34,12 +34,12 @@ class KittiLabelParser:
                 if cls not in self.classes:
                     continue
                 a = [float(x) for x in sp[4:]]
-                bbox = [a[0], a[1], a[2], a[3]]
+                box = [a[0], a[1], a[2], a[3]]
                 height, width, length = a[4], a[5], a[6]
                 t = [a[7], a[8], a[9]]
                 ry = a[10]
                 ret.append({
-                    'cls': cls, 'box': bbox,
+                    'cls': cls, 'box': box,
                     'w': width, 'h': height, 'l': length,
                     't': t, 'ry': ry,
                 })

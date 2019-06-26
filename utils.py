@@ -4,8 +4,9 @@ import numpy as np
 from mayavi import mlab
 
 
-def draw_projected_bbox3d_on_image(img, pts, color=(0, 255, 0), thickness=2):
-    ''' Draw 3d bounding box in image
+def draw_projected_box3d_on_image(img, pts, color=(0, 255, 0), thickness=2):
+    ''' Draw 3d bounding box on image.
+    
         pts: (8,3) array of vertices for the 3d box in following order:
             1 -------- 0
            /|         /|
@@ -32,12 +33,12 @@ def draw_projected_bbox3d_on_image(img, pts, color=(0, 255, 0), thickness=2):
     return img
 
 
-def draw_lidar_points(pc, bboxes=None, colors=None):
-    '''Draw lidar points.
+def draw_point_cloud(pc, boxes=None, colors=None):
+    '''Draw draw_point_cloud.
 
     Args:
       pc: (np.array) point cloud, sized (n,3) of XYZ.
-      bboxes: (list(np.array)) list of 3D bounding boxes, each sized [8,3].
+      boxes: (list(np.array)) list of 3D bounding boxes, each sized [8,3].
       colors: (list(tuple)) list of RGB colors.
     '''
     fig = mlab.figure(figure=None, bgcolor=(0, 0, 0),
@@ -51,23 +52,23 @@ def draw_lidar_points(pc, bboxes=None, colors=None):
     mlab.view(azimuth=180, elevation=70, focalpoint=[
               12.0909996, -1.04700089, -2.03249991], distance=62.0, figure=fig)
 
-    # draw 3d bboxes
-    if bboxes is not None:
+    # draw 3d boxes
+    if boxes is not None:
         if colors is None:
-            colors = [(1, 1, 1)] * len(bboxes)  # set default color to white
+            colors = [(1, 1, 1)] * len(boxes)  # set default color to white
 
-        for bbox, color in zip(bboxes, colors):
+        for box, color in zip(boxes, colors):
             for k in range(0, 4):
                 i, j = k, (k+1) % 4
-                p, q = bbox[i], bbox[j]
+                p, q = box[i], box[j]
                 mlab.plot3d([p[0], q[0]], [p[1], q[1]],
                             [p[2], q[2]], color=color)
                 i, j = k+4, (k+1) % 4 + 4
-                p, q = bbox[i], bbox[j]
+                p, q = box[i], box[j]
                 mlab.plot3d([p[0], q[0]], [p[1], q[1]],
                             [p[2], q[2]], color=color)
                 i, j = k, k+4
-                p, q = bbox[i], bbox[j]
+                p, q = box[i], box[j]
                 mlab.plot3d([p[0], q[0]], [p[1], q[1]],
                             [p[2], q[2]], color=color)
     mlab.show()
