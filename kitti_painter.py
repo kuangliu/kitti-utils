@@ -18,7 +18,7 @@ class KittiPainter:
         self.root = root
         self.data_parser = KittiDataParser(root)
         self.label_parser = KittiLabelParser(
-            root='./data/', classes=KittiLabelParser.kitti_classes[:-1])
+            root=root, classes=KittiLabelParser.kitti_classes[:-1])
 
     def get_calib(self, name):
         calib_path = os.path.join(
