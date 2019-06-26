@@ -34,7 +34,7 @@ def draw_projected_box3d_on_image(img, pts, color=(0, 255, 0), thickness=2):
 
 
 def draw_point_cloud(pc, boxes=None, colors=None):
-    '''Draw draw_point_cloud.
+    '''Draw draw point cloud.
 
     Args:
       pc: (np.array) point cloud, sized (n,3) of XYZ.
